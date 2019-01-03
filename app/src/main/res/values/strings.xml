@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">InventoryAppPart1</string>
+    <string name="ProductInfo">Product Information</string>
+    <string name="ProductName">Product Name</string>
+    <string name="ProductPrice">Price</string>
+    <string name="ProductQuantity">Quantity</string>
+
+    <string name="SupplierInfo">Supplier Information</string>
+    <string name="SupplierNumber">Phone</string>
+    <string name="SupplierWalmart">Walmart</string>
+    <string name="SupplierCostco">Costco</string>
+    <string name="SupplierUline">Uline</string>
+
+
+    <string name="dummy_data">Insert Dummy Data</string>
+    <string name="delete_all">Delete All Entries</string>
+
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+
+</resources>
