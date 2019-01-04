@@ -8,7 +8,6 @@ import com.example.dmorgan.inventoryapppart1.data.InventoryContract.InventoryEnt
 
 public class InventoryDbHelper extends SQLiteOpenHelper {
 
-    public static final String TAG = InventoryDbHelper.class.getSimpleName();
 
     private static String DATABASE = "inventory.db";
 
@@ -27,10 +26,6 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
             + InventoryEntry.COLUMN_PHONE + " INTEGER NOT NULL);";
 
         db.execSQL(SQL_CREATE_TABLE);
-
-
-
-
     }
 
     @Override

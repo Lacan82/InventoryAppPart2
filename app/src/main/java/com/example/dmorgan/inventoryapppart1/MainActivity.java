@@ -104,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
         values.put(InventoryEntry.COLUMN_PHONE, "555-555-5555");
 
         long newRowId = db.insert(InventoryEntry.TABLE_NAME, null, values);
+
+        if (newRowId == -1) {
+            Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
