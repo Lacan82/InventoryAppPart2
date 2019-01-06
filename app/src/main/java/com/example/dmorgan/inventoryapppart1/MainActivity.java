@@ -63,7 +63,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
 
 
+
         });
+
+
 
         getLoaderManager().initLoader(INVENTORY_LOADER, null,  this);
     }
@@ -135,6 +138,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         CursorAdapter.swapCursor(null);
+    }
+
+    public void sale(int id, int quantity) {
+
+        if (quantity == 0) {
+            Toast.makeText(this, getString(R.string.quantity_error), Toast.LENGTH_SHORT).show();
+        } else {
+            quantity--;
+
+            ContentValues values = new ContentValues();
+            values.put(InventoryEntry.COLUMN_QUANTITY, quantity);
+            Uri currentUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+            int rowAffected = getContentResolver().update(currentUri, values, null, null);
+            if (rowAffected == -1) {
+                Toast.makeText(this, getString(R.string.sale_error), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.save), Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        CursorAdapter.notifyDataSetChanged();
+
+
     }
 
 

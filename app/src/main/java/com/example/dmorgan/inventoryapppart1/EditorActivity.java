@@ -61,6 +61,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         ProductName = findViewById(R.id.edit_product_name);
         Price = findViewById(R.id.edit_price);
         Quantity = findViewById(R.id.edit_quantity);
+        Quantity.setText("0");
         Phone = findViewById(R.id.edit_phone);
         SupplierSpinner = findViewById(R.id.supplier_spinner);
 
@@ -179,22 +180,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
-            // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Save pet to database
                 saveProduct();
-                // Exit activity
                 finish();
                 return true;
-            // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 deleteItem();
                 return true;
-            // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // Navigate back to parent activity (CatalogActivity)
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
         }

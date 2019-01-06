@@ -35,6 +35,9 @@
 
     <string name="quantity_error">Cannot have a negative quantity</string>
 
+    <string name="sale_button">Sale</string>
+    <string name="sale_error">Unable to complete sale</string>
+
 
 
 </resources>
