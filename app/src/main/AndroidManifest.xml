@@ -22,6 +22,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
         </activity>
+        <provider
+            android:authorities="com.example.dmorgan.inventoryapppart1"
+            android:name=".data.InventoryProvider"
+            android:exported="false"/>
 
     </application>
 

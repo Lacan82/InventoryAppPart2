@@ -1,7 +1,13 @@
 package com.example.dmorgan.inventoryapppart1;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +21,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.dmorgan.inventoryapppart1.data.InventoryContract.InventoryEntry;
-import com.example.dmorgan.inventoryapppart1.data.InventoryDbHelper;
 
-public class EditorActivity extends AppCompatActivity {
+import com.example.dmorgan.inventoryapppart1.data.InventoryContract.InventoryEntry;
+
+
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int EXISTING_LOADER = 100;
+
+    private Uri currentUri;
 
     private EditText ProductName;
     private EditText Price;
@@ -32,6 +43,20 @@ public class EditorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editor);
+
+        Intent intent = getIntent();
+        currentUri = intent.getData();
+
+        if (currentUri == null) {
+            setTitle(getString(R.string.editor_title));
+            invalidateOptionsMenu();
+        } else {
+            setTitle(getString(R.string.edit_item_title));
+
+            getLoaderManager().initLoader(EXISTING_LOADER, null, this);
+        }
+
+
 
         ProductName = findViewById(R.id.edit_product_name);
         Price = findViewById(R.id.edit_price);
@@ -70,7 +95,27 @@ public class EditorActivity extends AppCompatActivity {
         });
     }
 
-    private void insertProduct() {
+    public void minusQuantity(View view) {
+        String quantityString = Quantity.getText().toString().trim();
+
+        if (Integer.parseInt(quantityString) == 0) {
+            Toast.makeText(this, getString(R.string.quantity_error), Toast.LENGTH_SHORT).show();
+        } else {
+            int quantityvalue = (Integer.parseInt(quantityString) - 1);
+            quantityString = Integer.toString(quantityvalue);
+            Quantity.setText(quantityString);
+        }
+
+    }
+
+    public void plusQuantity(View view) {
+        String quantityString = Quantity.getText().toString().trim();
+        int quantityvalue = (Integer.parseInt(quantityString) + 1);
+        quantityString = Integer.toString(quantityvalue);
+        Quantity.setText(quantityString);
+    }
+
+    private void saveProduct() {
         String nameString = ProductName.getText().toString().trim();
         String priceString = Price.getText().toString().trim();
         String quantityString = Quantity.getText().toString().trim();
@@ -79,9 +124,11 @@ public class EditorActivity extends AppCompatActivity {
         Double price = Double.parseDouble(priceString);
         int quantity = Integer.parseInt(quantityString);
 
-        InventoryDbHelper DbHelper = new InventoryDbHelper(this);
+        if (currentUri == null && TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
+                TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(phoneString) && Supplier == InventoryEntry.SUPPLIER_WALMART) {
+            return;
+        }
 
-        SQLiteDatabase db = DbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
@@ -90,13 +137,27 @@ public class EditorActivity extends AppCompatActivity {
         values.put(InventoryEntry.COLUMN_SUPPLIER, Supplier);
         values.put(InventoryEntry.COLUMN_PHONE, phoneString);
 
-        long newRowId = db.insert(InventoryEntry.TABLE_NAME, null, values);
+        if (currentUri == null) {
 
-        if (newRowId == -1) {
-            Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
+            Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
+
+            if (newUri == null) {
+
+                Toast.makeText(this, getString(R.string.save_error), Toast.LENGTH_SHORT).show();
+            } else {
+
+                Toast.makeText(this, getString(R.string.save_item), Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "Saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+            int rowsAffected = getContentResolver().update(currentUri, values, null, null);
+
+            if (rowsAffected == 0) {
+                Toast.makeText(this,getString(R.string.update_error), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.update_item), Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     @Override
@@ -104,6 +165,18 @@ public class EditorActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_editor, menu);
         return true;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (currentUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
@@ -111,13 +184,13 @@ public class EditorActivity extends AppCompatActivity {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save pet to database
-                insertProduct();
+                saveProduct();
                 // Exit activity
                 finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
-                Toast.makeText(this, "Function not implemented yet!", Toast.LENGTH_SHORT).show();
+                deleteItem();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -126,5 +199,88 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String[] projection = {
+                InventoryEntry._ID,
+                InventoryEntry.COLUMN_PRODUCT_NAME,
+                InventoryEntry.COLUMN_PRICE,
+                InventoryEntry.COLUMN_QUANTITY,
+                InventoryEntry.COLUMN_SUPPLIER,
+                InventoryEntry.COLUMN_PHONE
+        };
+
+        return new CursorLoader(this, currentUri, projection, null, null, null);
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor == null || cursor.getCount() < 1) {
+            return;
+        }
+
+        if (cursor.moveToFirst()) {
+
+            int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
+            int supplierColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER);
+            int phoneColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PHONE);
+
+
+            String productName = cursor.getString(nameColumnIndex);
+            double productPrice = cursor.getDouble(priceColumnIndex);
+            int supplierName = cursor.getInt(supplierColumnIndex);
+            int quantityAmount = cursor.getInt(quantityColumnIndex);
+            String phone = cursor.getString(phoneColumnIndex);
+
+            ProductName.setText(productName);
+            Price.setText(Double.toString(productPrice));
+            Quantity.setText(Integer.toString(quantityAmount));
+
+            switch (supplierName) {
+                case InventoryEntry.SUPPLIER_WALMART:
+                    SupplierSpinner.setSelection(0);
+                    break;
+                case InventoryEntry.SUPPLIER_COSTCO:
+                    SupplierSpinner.setSelection(1);
+                    break;
+                case InventoryEntry.SUPPLIER_ULINE:
+                    SupplierSpinner.setSelection(2);
+                    break;
+            }
+
+            Phone.setText(phone);
+
+
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        ProductName.setText("");
+        Price.setText("");
+        Quantity.setText("");
+        SupplierSpinner.setSelection(0);
+        Phone.setText("");
+
+    }
+
+    private void deleteItem() {
+        if (currentUri != null) {
+            int rowsDeleted = getContentResolver().delete(currentUri, null, null);
+
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, getString(R.string.delete_error), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.delete_item), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

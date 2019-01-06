@@ -4,7 +4,7 @@
     <string name="ProductName">Product Name</string>
     <string name="ProductPrice">Price</string>
     <string name="ProductQuantity">Quantity</string>
-
+    <string name="phone_hint">#</string>
     <string name="SupplierInfo">Supplier Information</string>
     <string name="SupplierNumber">Phone</string>
     <string name="SupplierWalmart">Walmart</string>
@@ -17,6 +17,24 @@
 
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+
+    <string name="editor_title">Add an Item</string>
+    <string name="edit_item_title">Edit Item</string>
+
+    <string name="save_error">Error saving item</string>
+    <string name="save_item">Item saved</string>
+
+    <string name="update_error">Error updating item</string>
+    <string name="update_item">Item updated</string>
+
+    <string name="delete_error">Error with deleting</string>
+    <string name="delete_item">Item deleted</string>
+
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+
+    <string name="quantity_error">Cannot have a negative quantity</string>
+
 
 
 </resources>

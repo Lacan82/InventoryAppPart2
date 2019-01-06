@@ -120,4 +120,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/supplier_spinner" />
+
+    <Button
+        android:id="@+id/minus_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="129dp"
+        android:layout_marginLeft="129dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="39dp"
+        android:onClick="minusQuantity"
+        android:text="@string/minus"
+        app:layout_constraintBottom_toTopOf="@+id/Supplier"
+        app:layout_constraintEnd_toStartOf="@+id/edit_quantity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/plus_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginEnd="94dp"
+        android:layout_marginRight="94dp"
+        android:layout_marginBottom="37dp"
+        android:onClick="plusQuantity"
+        android:text="@string/plus"
+        app:layout_constraintBottom_toTopOf="@+id/supplier_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_quantity"
+        app:layout_constraintTop_toBottomOf="@+id/edit_product_name" />
 </android.support.constraint.ConstraintLayout>
