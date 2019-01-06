@@ -116,19 +116,43 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         Quantity.setText(quantityString);
     }
 
+    public void OrderItem(View view) {
+        String phone = Phone.getText().toString().trim();
+        if (!TextUtils.isEmpty(phone)) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + phone));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getString(R.string.order_phone), Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
     private void saveProduct() {
         String nameString = ProductName.getText().toString().trim();
         String priceString = Price.getText().toString().trim();
         String quantityString = Quantity.getText().toString().trim();
         String phoneString = Phone.getText().toString().trim();
 
-        Double price = Double.parseDouble(priceString);
-        int quantity = Integer.parseInt(quantityString);
+
 
         if (currentUri == null && TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
                 TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(phoneString) && Supplier == InventoryEntry.SUPPLIER_WALMART) {
             return;
         }
+
+        //set Price and Quantity to zero just in case user removes, or forgets values.
+        double price = 0.00;
+        int quantity = 0;
+
+        if (!TextUtils.isEmpty(priceString)) {
+            price = Double.parseDouble(priceString);
+        }
+        if (!TextUtils.isEmpty(quantityString)) {
+            quantity = Integer.parseInt(quantityString);
+        }
+
 
 
         ContentValues values = new ContentValues();
@@ -276,5 +300,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 Toast.makeText(this, getString(R.string.delete_item), Toast.LENGTH_SHORT).show();
             }
         }
+        finish();
     }
 }

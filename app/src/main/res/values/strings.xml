@@ -38,6 +38,9 @@
     <string name="sale_button">Sale</string>
     <string name="sale_error">Unable to complete sale</string>
 
+    <string name="order_button">Order</string>
+    <string name="order_phone">a phone number hasn\'t been entered</string>
+
 
 
 </resources>
