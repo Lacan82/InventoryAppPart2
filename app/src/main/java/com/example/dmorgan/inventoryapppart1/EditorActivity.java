@@ -346,5 +346,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 }
             }
         });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 }
