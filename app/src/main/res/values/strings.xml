@@ -17,6 +17,7 @@
 
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="cancel">canel</string>
 
     <string name="editor_title">Add an Item</string>
     <string name="edit_item_title">Edit Item</string>
@@ -40,6 +41,14 @@
 
     <string name="order_button">Order</string>
     <string name="order_phone">a phone number hasn\'t been entered</string>
+
+    <string name="required_name">Product Name is Required</string>
+    <string name="required_price">Price is required</string>
+    <string name="required_error">Please input a numeric value for price</string>
+    <string name="required_quantity">Quantity is required</string>
+    <string name="required_phone">Phone number is required</string>
+
+    <string name="delete_confirm">Are you sure you want to delete this?</string>
 
 
 

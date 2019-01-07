@@ -1,5 +1,6 @@
 package com.example.dmorgan.inventoryapppart1;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -143,17 +144,42 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         //set Price and Quantity to zero just in case user removes, or forgets values.
+
+        if (TextUtils.isEmpty(nameString)) {
+            Toast.makeText(this, getString(R.string.required_name),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(priceString)) {
+            Toast.makeText(this, getString(R.string.required_price),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(quantityString)) {
+            Toast.makeText(this, getString(R.string.required_quantity),Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(phoneString)) {
+            Toast.makeText(this, getString(R.string.required_phone),Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //initalized the variables before parsing string so we can make sure they did enter an integer!
+
         double price = 0.00;
         int quantity = 0;
 
-        if (!TextUtils.isEmpty(priceString)) {
+        try {
             price = Double.parseDouble(priceString);
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.required_error), Toast.LENGTH_SHORT).show();
+            return;
         }
-        if (!TextUtils.isEmpty(quantityString)) {
+
+        try {
             quantity = Integer.parseInt(quantityString);
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.required_error), Toast.LENGTH_SHORT).show();
+            return;
         }
-
-
 
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
@@ -210,7 +236,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 finish();
                 return true;
             case R.id.action_delete:
-                deleteItem();
+                DeleteConfirmation();
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -301,5 +327,24 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
         finish();
+    }
+
+    private void DeleteConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_confirm);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteItem();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
     }
 }
